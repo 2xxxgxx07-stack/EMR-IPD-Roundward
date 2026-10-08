@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IPD Tablet EMR - Smart Roundward</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231d4ed8'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>">
+</head>
+<body>
+
+  <!-- Responsive Web App Container -->
+  <div class="app-wrapper">
+
+    <!-- Main EMR Application Header -->
+    <header class="app-header">
+      <div class="app-header-left">
+        <button class="icon-btn menu-toggle-btn" id="menuToggleBtn" aria-label="เปิดเมนูนำทาง">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2c3e50" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="app-title-group">
+          <button class="back-home-btn" id="headerBackBtn" onclick="switchPage('dashboard')" style="display:none;" title="กลับหน้าหลัก">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>หน้าหลัก</span>
+          </button>
+          <span class="blue-accent-bar" id="blueAccentBar"></span>
+          <h1 class="app-title" id="pageTitle">หน้าหลัก</h1>
+        </div>
+
+      </div>
+
+      <!-- User Profile Header -->
+      <div class="user-profile-widget" id="userProfileWidget">
+        <div class="avatar-ring">
+          <img src="assets/images/nurse.jpg" alt="พยาบาลสมเจต คนเดิม" class="avatar-img" id="userAvatarImg">
+        </div>
+        <div class="user-text-info">
+          <span class="user-name">สมเจต คนเดิม</span>
+          <span class="user-role">Role Nurse</span>
+        </div>
+        <button class="profile-dropdown-arrow" aria-label="เมนูโปรไฟล์" id="profileToggleBtn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#4a5568" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <!-- Profile Dropdown Menu -->
+        <div class="profile-dropdown-menu" id="profileDropdownMenu">
+          <div class="dropdown-header">
+            <div class="nurse-meta">
+              <strong>พว. สมเจต คนเดิม (RN)</strong>
+              <span>เวรเช้า: 07:00 - 15:30 น.</span>
+              <span class="badge-active">ปฏิบัติหน้าที่ Ward 5B</span>
+            </div>
+          </div>
+          <hr class="dropdown-divider">
+          <a href="#" class="dropdown-item" onclick="switchPage('dashboard'); return false;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            หน้าหลัก (Dashboard)
+          </a>
+          <a href="#" class="dropdown-item" onclick="switchPage('todo'); return false;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            To Do List (รายการงานวอร์ด)
+          </a>
+          <a href="#" class="dropdown-item" onclick="resetToSampleData(); return false;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            คืนค่าข้อมูลเริ่มต้น (Reset Sample Data)
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: หน้าหลัก (DASHBOARD VIEW) -->
+    <!-- ======================================================== -->
+    <main class="main-container view-page active" id="viewDashboard">
+      
+      <!-- Nurse Greeting Hero Banner -->
+      <section class="nurse-hero-card">
+        <!-- Animated 3D Nurse Character (No Background, Waving & Smiling) -->
+        <div class="nurse-avatar-container" onclick="triggerNurseSpeech(true)" title="คลิกเพื่อทักทายคุณพยาบาล">
+          
+          <!-- Animated Speech Bubble -->
+          <div class="nurse-speech-bubble" id="nurseSpeechBubble">
+            <span class="speech-text" id="nurseSpeechText">สวัสดีค่ะพว.สมเจต วันนี้สู้ๆ นะคะ! 🩺</span>
+            <span class="bubble-arrow"></span>
+          </div>
+
+          <!-- Living Character Wrapper -->
+          <div class="character-wrapper" id="nurseCharacter">
+            <!-- 3D Transparent Nurse Character with Multi-Layer Animation -->
+            <div class="nurse-img-wrapper" id="nurseImgWrapper">
+              <img src="assets/images/nurse_transparent.png" alt="พยาบาลสมเจต คนเดิม" class="nurse-transparent-img" id="nurseTransparentImg">
+              
+              <!-- Hand Wave Glow & Motion -->
+              <div class="nurse-wave-glow" id="nurseWaveGlow">
+                <span class="wave-halo"></span>
+              </div>
+            </div>
+            
+            <!-- Facial Expression Overlay (Blinking eyes & Sweet Smile Effects) -->
+            <div class="nurse-face-fx" id="nurseFaceFx">
+              <span class="sparkle-star sparkle-1">✨</span>
+              <span class="sparkle-star sparkle-2">💖</span>
+              <span class="sparkle-star sparkle-3">⭐</span>
+            </div>
+          </div>
+          
+          <div class="nurse-click-hint">แตะเพื่อคุยกับพยาบาล AI</div>
+        </div>
+
+        <!-- Greeting Text Information -->
+        <div class="nurse-hero-content">
+          <div class="system-status-pill">
+            <span class="status-pulse-dot"></span>
+            <span class="status-text">สถานะระบบ: เชื่อมต่อ EMR Realtime • Ward 5B</span>
+          </div>
+
+          <h2 class="hero-greeting-title">
+            สวัสดีตอนเช้า, คุณสมเจต คนเดิม <span class="sparkle-glow">✨</span>
+          </h2>
+          
+          <p class="hero-greeting-desc">
+            วันนี้มีงานที่ต้องดูแลและติดตามอย่างใกล้ชิด ขอให้เป็นวันที่ราบรื่นและปลอดภัยทุกเคสนะคะ!
+          </p>
+
+          <div class="nurse-info-badges">
+            <div class="info-badge-item">
+              <span class="badge-icon">🪪</span>
+              <span class="badge-label">Registered Nurse (เวรเช้า)</span>
+            </div>
+            <div class="info-badge-item">
+              <span class="badge-icon">📅</span>
+              <span class="badge-label" id="heroCalendarDate">วันจันทร์ที่ 6 มิถุนายน 2024</span>
+            </div>
+            <div class="info-badge-item">
+              <span class="badge-icon">🕒</span>
+              <span class="badge-label">07:00 - 15:30 น.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 Dashboard Metric Cards (2x2 Grid) -->
+      <section class="dashboard-grid">
+        
+        <!-- CARD 1: สิ่งที่ต้องทำ (To-Do List วันนี้) -->
+        <div class="dash-card card-todo" onclick="switchPage('todo')">
+          <div class="dash-card-header">
+            <div class="card-icon-title">
+              <div class="card-icon-circle icon-blue">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="card-title-group">
+                <h3>สิ่งที่ต้องทำ</h3>
+                <p>To-Do List วันนี้</p>
+              </div>
+            </div>
+            <span class="badge-capsule badge-soft-blue" id="dashTotalBadge">รวม 12 รายการ</span>
+          </div>
+
+          <div class="dash-card-body">
+            <div class="metric-row">
+              <div class="primary-metric">
+                <span class="big-number text-blue" id="dashRemainingNum">10</span>
+                <span class="metric-unit">รายการค้าง</span>
+              </div>
+              <div class="status-chip chip-green" id="dashCompletedChip">
+                เสร็จแล้ว <strong id="dashCompletedNum">2</strong>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-track">
+              <div class="progress-fill" id="dashProgressBar" style="width: 25%;"></div>
+            </div>
+          </div>
+
+          <div class="dash-card-footer">
+            <span class="footer-meta" id="dashProgressLabel">เป้าหมายรอบเช้า 25% สำเร็จ</span>
+            <a href="#" class="footer-link" onclick="event.preventDefault(); switchPage('todo');">
+              ไปที่ To-Do List <span class="arrow">&gt;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2: Order ที่หมอสั่ง (Doctor Orders) -->
+        <div class="dash-card card-orders" onclick="showToast('เข้าสู่ระบบคำสั่งแพทย์ (Doctor Orders)', 'info')">
+          <div class="dash-card-header">
+            <div class="card-icon-title">
+              <div class="card-icon-circle icon-red">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .2.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+              </div>
+              <div class="card-title-group">
+                <h3>Order ที่หมอสั่ง</h3>
+                <p>Doctor Orders</p>
+              </div>
+            </div>
+            <span class="badge-capsule badge-red">ด่วน Stat 2</span>
+          </div>
+
+          <div class="dash-card-body">
+            <div class="metric-row">
+              <div class="primary-metric">
+                <span class="big-number text-red">9</span>
+                <span class="metric-unit">คำสั่งใหม่วันนี้</span>
+              </div>
+              <div class="status-chip chip-blue">
+                รอ Confirm 4
+              </div>
+            </div>
+
+            <div class="sub-status-line">
+              <span class="sub-dot dot-red"></span>
+              <span class="sub-text">Stat: 2 รายการ</span>
+              <span class="sub-dot dot-blue ml-2"></span>
+              <span class="sub-text">Routine: 3 รายการ</span>
+            </div>
+          </div>
+
+          <div class="dash-card-footer">
+            <span class="footer-meta">อัปเดตจาก Ward Round 10 นาทีที่แล้ว</span>
+            <a href="#" class="footer-link">
+              ตรวจสอบคำสั่ง <span class="arrow">&gt;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 3: ผู้ป่วยที่ต้องดูแล (Patients In-charge) -->
+        <div class="dash-card card-patients" onclick="showToast('เข้าสู่ผังเตียงผู้ป่วย Ward 5B', 'info')">
+          <div class="dash-card-header">
+            <div class="card-icon-title">
+              <div class="card-icon-circle icon-navy">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+              </div>
+              <div class="card-title-group">
+                <h3>ผู้ป่วยที่ต้องดูแล</h3>
+                <p>Patients In-charge</p>
+              </div>
+            </div>
+            <span class="badge-capsule badge-gray">Ward 5B</span>
+          </div>
+
+          <div class="dash-card-body">
+            <div class="metric-row">
+              <div class="primary-metric">
+                <span class="big-number text-navy">12</span>
+                <span class="metric-unit">เตียง (เต็ม 100%)</span>
+              </div>
+              <div class="status-chip chip-coral">
+                เฝ้าระวัง MEWS 2
+              </div>
+            </div>
+
+            <div class="sub-info-row">
+              <span class="sub-text">เตียง 5B-01 ถึง 5B-12</span>
+              <span class="sub-tag green-tag">ไม่มีเตียงว่าง</span>
+            </div>
+          </div>
+
+          <div class="dash-card-footer">
+            <span class="footer-meta">พยาบาลผู้รับผิดชอบ: สมเจต</span>
+            <a href="#" class="footer-link">
+              ดูรายชื่อผู้ป่วย <span class="arrow">&gt;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 4: การส่งเวรพยาบาล (Nurse Handover) -->
+        <div class="dash-card card-handover" onclick="showToast('เข้าสู่ระบบบันทึกส่งต่อเวร SBAR', 'info')">
+          <div class="dash-card-header">
+            <div class="card-icon-title">
+              <div class="card-icon-circle icon-emerald">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+              </div>
+              <div class="card-title-group">
+                <h3>การส่งเวรพยาบาล</h3>
+                <p>Nurse Handover</p>
+              </div>
+            </div>
+            <span class="badge-capsule badge-purple">เวรดึก → เช้า</span>
+          </div>
+
+          <div class="dash-card-body">
+            <div class="metric-row">
+              <div class="primary-metric">
+                <span class="big-number text-emerald">10/12</span>
+                <span class="metric-unit">รับเวรแล้ว</span>
+              </div>
+              <div class="status-chip chip-rose">
+                Focus 2 เตียง
+              </div>
+            </div>
+
+            <div class="sub-info-row">
+              <div class="flex-align-center">
+                <span class="sub-dot dot-green"></span>
+                <span class="sub-text">ส่งมอบแล้ว 10 เตียง</span>
+              </div>
+              <span class="sub-tag red-tag">มี Note วิกฤต 2</span>
+            </div>
+          </div>
+
+          <div class="dash-card-footer">
+            <span class="footer-meta">บันทึกล่าสุด 06:45 น.</span>
+            <a href="#" class="footer-link">
+              ดูบันทึกส่งเวร <span class="arrow">&gt;</span>
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: หน้า TO DO LIST (TO-DO LIST VIEW) -->
+    <!-- ======================================================== -->
+    <main class="main-container view-page" id="viewTodoList">
+      
+      <!-- Top Control Card / Summary Bar -->
+      <section class="control-status-card">
+        <div class="control-left">
+          <label class="custom-checkbox-wrapper select-all-label">
+            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)">
+            <span class="custom-checkbox"></span>
+            <span class="label-text">เลือกทั้งหมด</span>
+          </label>
+        </div>
+
+        <!-- Quick Filter Pills -->
+        <div class="filter-pills-container">
+          <button class="filter-pill active" data-filter="all" onclick="applyStatusFilter('all', this)">ทั้งหมด</button>
+          <button class="filter-pill" data-filter="pending" onclick="applyStatusFilter('pending', this)">ยังไม่เสร็จ</button>
+          <button class="filter-pill" data-filter="completed" onclick="applyStatusFilter('completed', this)">เสร็จแล้ว</button>
+        </div>
+
+        <div class="status-counter-group">
+          <!-- บล็อก ยังคงเหลือ -->
+          <div class="counter-box remaining-box" onclick="applyStatusFilter('pending')" title="คลิกเพื่อดูกรองเฉพาะงานที่ยังคงเหลือ">
+            <span class="counter-title">ยังคงเหลือ</span>
+            <span class="counter-number blue-number" id="remainingCount">0</span>
+          </div>
+
+          <!-- บล็อก เสร็จแล้ว -->
+          <div class="counter-box completed-box" onclick="applyStatusFilter('completed')" title="คลิกเพื่อดูกรองเฉพาะงานที่เสร็จแล้ว">
+            <span class="counter-title">เสร็จแล้ว</span>
+            <span class="counter-number green-number" id="completedCount">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search & Sorting Toolbar (Tablet Enhancement) -->
+      <section class="search-toolbar">
+        <div class="search-input-box">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="ค้นหาตามหัวข้องาน, เตียง, หรือรายละเอียด..." oninput="handleSearch(this.value)">
+          <button class="clear-search-btn" id="clearSearchBtn" onclick="clearSearch()" style="display:none;">✕</button>
+        </div>
+        <div class="time-filter-select-wrapper">
+          <select id="timeFilterSelect" onchange="handleTimeFilter(this.value)">
+            <option value="all">ทุกช่วงเวลา</option>
+            <option value="08:30">08:30 น. (รอบเช้า)</option>
+            <option value="11:30">11:30 น. (รอบเที่ยง)</option>
+            <option value="14:00">14:00 น. (รอบบ่าย)</option>
+            <option value="17:30">17:30 น. (รอบเย็น)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- To-Do List Container -->
+      <section class="todo-list-container" id="todoListContainer">
+        <div class="loading-state">กำลังโหลดรายการงานในวอร์ด...</div>
+      </section>
+
+      <!-- Bottom Action Bar with "+ เพิ่มรายการ" Button -->
+      <div class="bottom-action-container">
+        <button class="add-task-btn" id="openAddModalBtn" onclick="openAddModal()">
+          <span class="add-icon">+</span>
+          <span class="add-text">เพิ่มรายการ</span>
+        </button>
+      </div>
+
+    </main>
+
+  </div> <!-- /app-wrapper -->
+
+  <!-- ======================================================== -->
+  <!-- MODAL: เพิ่มรายการ (Add Task Modal) -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-card modal-form-card" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="addModalTitle">เพิ่มรายการ</h2>
+        <button class="modal-close-btn" onclick="closeModal('addModal')" aria-label="ปิด">✕</button>
+      </div>
+
+      <form id="addTaskForm" onsubmit="handleAddTask(event)">
+        <div class="form-row three-cols">
+          <!-- วัน -->
+          <div class="form-group">
+            <label class="form-label" for="addDate">วัน</label>
+            <div class="input-with-icon">
+              <input type="text" id="addDate" required placeholder="01/09/2569" value="01/09/2569">
+              <span class="field-icon calendar-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="14" r="1"/><circle cx="12" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- เวลา -->
+          <div class="form-group">
+            <label class="form-label" for="addTime">เวลา</label>
+            <div class="input-with-icon">
+              <input type="text" id="addTime" required placeholder="17:30" value="17:30">
+              <span class="field-icon time-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#475569" stroke-width="2"><path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- ระดับความสำคัญ -->
+          <div class="form-group">
+            <label class="form-label" for="addPriority">ระดับความสำคัญ</label>
+            <div class="select-wrapper">
+              <select id="addPriority" required>
+                <option value="" disabled selected>เลือกระดับความสำคัญ</option>
+                <option value="ปานกลาง">ปานกลาง</option>
+                <option value="สูง">สูง</option>
+                <option value="วิกฤต/ด่วนมาก">วิกฤต/ด่วนมาก</option>
+                <option value="ทั่วไป/ต่ำ">ทั่วไป/ต่ำ</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748b" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- หัวข้อ -->
+        <div class="form-group full-width">
+          <label class="form-label" for="addTitle">หัวข้อ</label>
+          <input type="text" id="addTitle" class="full-input" placeholder="ระบุชื่อหัวข้อ" required>
+        </div>
+
+        <!-- รายละเอียด -->
+        <div class="form-group full-width">
+          <label class="form-label" for="addDetails">รายละเอียด</label>
+          <textarea id="addDetails" class="full-textarea" rows="7" placeholder="ระบุรายละเอียดเพิ่มเติม"></textarea>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal('addModal')">ยกเลิก</button>
+          <button type="submit" class="btn-submit-green">เพิ่มรายการ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: ดูรายละเอียด (View Details Modal) -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal-card modal-view-card" role="dialog" aria-labelledby="viewModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="viewModalTitle">ดูรายละเอียด</h2>
+        <button class="modal-close-btn" onclick="closeModal('viewModal')" aria-label="ปิด">✕</button>
+      </div>
+
+      <!-- Quick Edit Button Bar -->
+      <div class="view-modal-subbar">
+        <button class="btn-edit-badge" id="viewEditTriggerBtn" onclick="switchToEditFromView()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>แก้ไข</span>
+        </button>
+      </div>
+
+      <!-- Meta Information Row -->
+      <div class="view-meta-row">
+        <div class="meta-item">
+          <span class="meta-label">วัน</span>
+          <span class="meta-value" id="viewDateValue">01/09/2569</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">เวลา</span>
+          <span class="meta-value" id="viewTimeValue">08:30</span>
+        </div>
+        <div class="meta-item priority-meta-item">
+          <span class="meta-label">ระดับความสำคัญ</span>
+          <div class="priority-pill-badge" id="viewPriorityBadge">
+            <span class="p-dot"></span>
+            <span class="p-text" id="viewPriorityText">ปานกลาง</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title Header -->
+      <div class="view-title-block">
+        <h3 class="view-title-label">หัวข้อ</h3>
+        <p class="view-title-content" id="viewTitleValue">วัดและลงบันทึก Vital Signs + Pain Score + MEWS ตามรอบ</p>
+      </div>
+
+      <!-- Detail Box -->
+      <div class="view-detail-block">
+        <h3 class="view-detail-label">รายละเอียด</h3>
+        <div class="view-detail-scroll-pane" id="viewDetailsValue"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: แก้ไขรายการ (Edit Task Modal) -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card modal-form-card" role="dialog" aria-labelledby="editModalTitle" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="editModalTitle">แก้ไขรายการ</h2>
+        <button class="modal-close-btn" onclick="closeModal('editModal')" aria-label="ปิด">✕</button>
+      </div>
+
+      <form id="editTaskForm" onsubmit="handleSaveEdit(event)">
+        <input type="hidden" id="editTaskId">
+        <div class="form-row three-cols">
+          <!-- วัน -->
+          <div class="form-group">
+            <label class="form-label" for="editDate">วัน</label>
+            <div class="input-with-icon">
+              <input type="text" id="editDate" required placeholder="01/09/2569">
+              <span class="field-icon calendar-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="14" r="1"/><circle cx="12" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- เวลา -->
+          <div class="form-group">
+            <label class="form-label" for="editTime">เวลา</label>
+            <div class="input-with-icon">
+              <input type="text" id="editTime" required placeholder="08:30">
+              <span class="field-icon time-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#475569" stroke-width="2"><path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- ระดับความสำคัญ -->
+          <div class="form-group">
+            <label class="form-label" for="editPriority">ระดับความสำคัญ</label>
+            <div class="select-wrapper">
+              <select id="editPriority" required>
+                <option value="ปานกลาง">ปานกลาง</option>
+                <option value="สูง">สูง</option>
+                <option value="วิกฤต/ด่วนมาก">วิกฤต/ด่วนมาก</option>
+                <option value="ทั่วไป/ต่ำ">ทั่วไป/ต่ำ</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748b" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- หัวข้อ -->
+        <div class="form-group full-width">
+          <label class="form-label" for="editTitle">หัวข้อ</label>
+          <input type="text" id="editTitle" class="full-input" required>
+        </div>
+
+        <!-- รายละเอียด -->
+        <div class="form-group full-width">
+          <label class="form-label" for="editDetails">รายละเอียด</label>
+          <textarea id="editDetails" class="full-textarea edit-mode-area" rows="12"></textarea>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal('editModal')">ยกเลิก</button>
+          <button type="submit" class="btn-submit-green">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sidebar Drawer Navigation -->
+  <div class="sidebar-drawer-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+      <div class="drawer-hospital-logo">
+        <div class="hospital-icon-box">🏥</div>
+        <div>
+          <h3>EMR Roundward</h3>
+          <p>ระบบบันทึกงานหอผู้ป่วยใน</p>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeSidebar()">✕</button>
+    </div>
+
+    <div class="drawer-ward-card">
+      <span class="ward-tag">Active Ward</span>
+      <h4>หอผู้ป่วยอายุรกรรม Ward 5B</h4>
+      <p>จำนวนเตียงครอง: 12 / 12 เตียง (เต็ม 100%)</p>
+    </div>
+
+    <nav class="drawer-nav">
+      <a href="#" class="drawer-link" id="drawerDashboardLink" onclick="switchPage('dashboard'); closeSidebar(); return false;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        หน้าหลัก (Dashboard)
+      </a>
+      <a href="#" class="drawer-link active" id="drawerTodoLink" onclick="switchPage('todo'); closeSidebar(); return false;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        To Do List (รายการงานวอร์ด)
+      </a>
+      <a href="#" class="drawer-link" onclick="showToast('เข้าสู่ผังเตียงผู้ป่วย Ward 5B', 'info'); closeSidebar(); return false;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+        ผังเตียงผู้ป่วย (Ward Bed Board)
+      </a>
+      <a href="#" class="drawer-link" onclick="showToast('คำสั่งการรักษาจากแพทย์ (Doctor Orders)', 'info'); closeSidebar(); return false;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        คำสั่งการรักษา (Doctor Orders)
+      </a>
+      <a href="#" class="drawer-link" onclick="showToast('ระบบส่งต่อเวรพยาบาล (Nurse Handover SBAR)', 'info'); closeSidebar(); return false;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        การส่งเวรพยาบาล (Nurse Handover)
+      </a>
+    </nav>
+
+    <div class="drawer-footer">
+      <div class="system-version">IPD Mobile Round v2.6.4 (iOS iPadOS Optimized)</div>
+    </div>
+  </aside>
+
+  <!-- Toast Notification Alert -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
